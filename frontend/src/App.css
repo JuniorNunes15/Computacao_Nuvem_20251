@@ -1,0 +1,247 @@
+/* :root permite definir cores em um só lugar, facilitando a manutenção */
+:root {
+  --blue-primary: #007aff; /* Um azul vibrante e moderno */
+  --blue-dark: #0056b3;
+  --blue-light: #e3f2fd;
+  --red-danger: #ff3b30;
+  --red-light: #ffebee;
+  --background-light: #f0f4f8; /* Fundo azul-acinzentado muito claro */
+  --card-white: #ffffff;
+  --text-dark: #2c3e50;
+  --text-light: #8492a6;
+  --border-color: #dce4e9;
+  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius-soft: 12px; /* Arredondamento padrão */
+  --border-radius-rounder: 16px;
+  --transition-standard: all 0.3s ease;
+}
+
+/* Estilo geral da aplicação */
+.app {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--background-light);
+  border-radius: var(--border-radius-rounder);
+  box-shadow: var(--shadow-light);
+}
+
+/* Estilo para o título principal */
+h1 {
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Formulário de contato - ESTILIZAÇÃO APRIMORADA */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 40px;
+  padding: 25px;
+  background: var(--card-white);
+  border-radius: var(--border-radius-rounder);
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--border-color);
+  transition: var(--transition-standard);
+}
+
+.contact-form:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  border-color: var(--blue-light);
+}
+
+/* Título do formulário */
+.contact-form h2 {
+  color: var(--blue-primary);
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contact-form h2::before {
+  content: "✏️";
+}
+
+/* Inputs do formulário com melhor espaçamento e estilização */
+.contact-form input {
+  padding: 15px 18px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius-soft);
+  font-size: 16px;
+  transition: var(--transition-standard);
+  background-color: #fafafa;
+  font-family: inherit;
+}
+
+/* Efeito de foco para os inputs */
+.contact-form input:focus {
+  outline: none;
+  border-color: var(--blue-primary);
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+}
+
+/* Placeholder estilizado */
+.contact-form input::placeholder {
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+/* Botão de adicionar contato */
+.contact-form button {
+  padding: 14px;
+  background: linear-gradient(to right, var(--blue-primary), var(--blue-dark));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-soft);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: var(--transition-standard);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  box-shadow: 0 3px 6px rgba(0, 122, 255, 0.2);
+}
+
+.contact-form button:hover {
+  background: linear-gradient(to right, var(--blue-dark), #004085);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 122, 255, 0.3);
+}
+
+.contact-form button:active {
+  transform: translateY(0);
+}
+
+/* Lista de contatos em grid - ESPAÇAMENTO AUMENTADO */
+.contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px; /* Aumentado de 20px para 28px */
+  margin-top: 10px;
+}
+
+/* Card de cada contato */
+.contact-item {
+  background: var(--card-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-rounder);
+  padding: 25px;
+  box-shadow: 0 4px 8px rgba(44, 62, 80, 0.05);
+  transition: var(--transition-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efeito de hover com sombra mais pronunciada */
+.contact-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(44, 62, 80, 0.12);
+  border-color: var(--blue-light);
+}
+
+/* Borda decorativa no topo do card */
+.contact-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, var(--blue-primary), var(--blue-dark));
+}
+
+/* Estilo para o nome do contato */
+.contact-item strong {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--blue-primary);
+  font-size: 1.25em;
+  font-weight: 600;
+  position: relative;
+  padding-left: 10px;
+}
+
+.contact-item strong::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 16px;
+  background: var(--blue-primary);
+  border-radius: 2px;
+}
+
+/* Estilo para os detalhes do contato */
+.contact-item p {
+  margin: 10px 0;
+  color: var(--text-dark);
+  line-height: 1.5;
+  padding-left: 10px;
+  border-left: 1px dashed var(--border-color);
+}
+
+.contact-item p strong {
+  color: var(--text-dark);
+  font-weight: 600;
+  width: 80px;
+  display: inline-block;
+}
+
+/* Botão de deletar com estilo aprimorado */
+.btn-delete {
+  margin-top: 20px;
+  padding: 10px 16px;
+  background: transparent;
+  color: var(--red-danger);
+  border: 2px solid var(--red-danger);
+  border-radius: var(--border-radius-soft);
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: var(--transition-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+}
+
+.btn-delete:hover {
+  background: var(--red-danger);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 59, 48, 0.2);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+/* Ícone para o botão de deletar */
+.btn-delete::before {
+  content: "🗑️";
+}
+
+/* Mensagem quando não há contatos */
+.no-contacts {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px;
+  background: var(--card-white);
+  border-radius: var(--border-radius-soft);
+  border: 1px dashed var(--border-color);
+  color: var(--text-light);
+  font-style: italic;
+}
