@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuração do banco de dados (ex: RDS MySQL)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://mob:psycho@localhost/contatos_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:admin123@localhost/contatos_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o banco de dados
