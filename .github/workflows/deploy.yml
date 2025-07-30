@@ -1,82 +1,54 @@
-name: Deploy to Single EC2
+- name: Build e executar containers
+  uses: appleboy/ssh-action@v1.0.3
+  with:
+    host: ${{ secrets.EC2_HOST }}
+    username: ${{ secrets.EC2_USER }}
+    key: ${{ secrets.EC2_SSH_KEY }}
+    script: |
+      cd ~/app
+      
+      # ===== BACKEND =====
+      echo "Processando backend..."
+      cd backend
+      
+      docker stop backend-container || true
+      docker rm backend-container || true
+      docker rmi backend-image || true
+      
+      # Build com tratamento de erro
+      if docker build -t backend-image . ; then
+        docker run -d \
+          --name backend-container \
+          --restart unless-stopped \
+          -p 5000:5000 \
+          -v $PWD/data:/app/data \
+          backend-image
+      else
+        echo "❌ Falha no build do backend"
+        exit 1
+      fi
 
-on:
-  push:
-    branches:
-      - main
+      # ===== FRONTEND =====
+      echo "Processando frontend..."
+      cd ../frontend
+      
+      docker stop frontend-container || true
+      docker rm frontend-container || true
+      docker rmi frontend-image || true
+      
+      # Build com tratamento de erro
+      if docker build -t frontend-image . ; then
+        docker run -d \
+          --name frontend-container \
+          --restart unless-stopped \
+          -p 3000:80 \
+          -e API_BASE_URL=http://localhost:5000 \
+          frontend-image
+      else
+        echo "❌ Falha no build do frontend"
+        echo "Logs de build:"
+        docker build -t frontend-image . 2>&1 | tee build.log
+        exit 1
+      fi
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    # Copiar todo o projeto para a EC2
-    - name: Copiar código para EC2
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        source: "."
-        target: "/home/${{ secrets.EC2_USER }}/app"
-
-    # Executar todos os comandos na mesma instância
-    - name: Build e executar containers
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd ~/app
-          
-          # ===== BACKEND =====
-          echo "Processando backend..."
-          cd backend
-          
-          # Parar e remover container existente
-          docker stop backend-container || true
-          docker rm backend-container || true
-          
-          # Remover imagem antiga
-          docker rmi backend-image || true
-          
-          # Build da nova imagem
-          docker build -t backend-image .
-          
-          # Executar novo container
-          docker run -d \
-            --name backend-container \
-            --restart unless-stopped \
-            -p 5000:5000 \
-            -v $PWD/data:/app/data \
-            backend-image
-
-          # ===== FRONTEND =====
-          echo "Processando frontend..."
-          cd ../frontend
-          
-          # Parar e remover container existente
-          docker stop frontend-container || true
-          docker rm frontend-container || true
-          
-          # Remover imagem antiga
-          docker rmi frontend-image || true
-          
-          # Build da nova imagem
-          docker build -t frontend-image .
-          
-          # Executar novo container
-          docker run -d \
-            --name frontend-container \
-            --restart unless-stopped \
-            -p 3000:80 \
-            -e API_BASE_URL=http://localhost:5000 \
-            frontend-image
-
-          # Mostrar containers em execução
-          echo "Containers ativos:"
-          docker ps
+      docker ps

@@ -11,7 +11,7 @@ const ContactForm = ({ onAddContact }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://ec2-54-209-75-88.compute-1.amazonaws.com:5000/contatos', contact);
+      const response = await axios.post('http:localhost:5000/contatos', contact);
       onAddContact(response.data);
       setContact({ nome: '', email: '', telefone: '' });
     } catch (err) {
