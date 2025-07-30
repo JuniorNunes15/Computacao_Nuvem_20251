@@ -23,17 +23,7 @@ jobs:
         source: "./backend"
         target: "/home/${{ secrets.EC2_USER }}/backend"
 
-    - name: Verificar arquivos no EC2 Instance 1
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          echo "Arquivos no backend:"
-          ls -la ~/backend
-
-    - name: Build backend Docker image on EC2 Instance 1
+    - name: Build e executar backend no EC2 Instance 1
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
@@ -41,8 +31,24 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd ~/backend/backend
+          
+          # Parar e remover container existente
+          docker stop backend-container || true
+          docker rm backend-container || true
+          
+          # Remover imagem antiga
           docker rmi backend-image || true
+          
+          # Build da nova imagem
           docker build -t backend-image .
+          
+          # Executar novo container
+          docker run -d \
+            --name backend-container \
+            --restart unless-stopped \
+            -p 5000:5000 \
+            -v ~/backend/data:/app/data \
+            backend-image
 
     # === FRONTEND - EC2_2 ===
     - name: Copiar frontend para EC2 Instance 2
@@ -54,17 +60,7 @@ jobs:
         source: "./frontend"
         target: "/home/${{ secrets.EC2_USER }}/frontend"
 
-    - name: Verificar arquivos no EC2 Instance 2
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          echo "Arquivos no frontend:"
-          ls -la ~/frontend/frontend
-
-    - name: Build frontend Docker image on EC2 Instance 2
+    - name: Build e executar frontend no EC2 Instance 2
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_2_HOST }}
@@ -72,5 +68,20 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd ~/frontend/frontend
+          
+          # Parar e remover container existente
+          docker stop frontend-container || true
+          docker rm frontend-container || true
+          
+          # Remover imagem antiga
           docker rmi frontend-image || true
+          
+          # Build da nova imagem
           docker build -t frontend-image .
+          
+          # Executar novo container
+          docker run -d \
+            --name frontend-container \
+            --restart unless-stopped \
+            -p 3000:80 \
+            frontend-image
