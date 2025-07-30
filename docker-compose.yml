@@ -1,23 +1,9 @@
 services:
   backend:
     build: ./backend
-    depends_on:
-      - db
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=senha
-      - MYSQL_DB=meubanco
+    
 
   frontend:
     build: ./frontend
     ports:
       - "3000:80"
-
-  db:
-    image: mysql:5.7
-    environment:
-      - MYSQL_ROOT_PASSWORD=senha
-      - MYSQL_DATABASE=meubanco
-    ports:
-      - "3306:3306"
