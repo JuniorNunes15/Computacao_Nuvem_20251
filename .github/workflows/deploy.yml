@@ -62,7 +62,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           echo "Arquivos no frontend:"
-          ls -la ~/frontend
+          ls -la ~/frontend/frontend
 
     - name: Build frontend Docker image on EC2 Instance 2
       uses: appleboy/ssh-action@v1.0.3
