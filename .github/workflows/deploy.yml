@@ -27,10 +27,10 @@ jobs:
           docker rmi backend-image || true
           docker build -t backend-image .
           docker run -d \
-  --name backend-container \
-  -p 5000:5000 \
-  -e DB_HOST=${{ secrets.EC2_HOST }} \
-  backend-image
+          --name backend-container \
+          -p 5000:5000 \
+          -e DB_HOST=${{ secrets.EC2_HOST }} \
+          backend-image
 
     # Frontend → EC2_2
     - name: Copy frontend to EC2 Instance 2
@@ -53,7 +53,5 @@ jobs:
           docker rm -f frontend-container || true
           docker rmi frontend-image || true
           docker build -t frontend-image .
-          docker run -d --name frontend-container -p 80:80 \
-          -e BACK_ADRESS=${{ secrets.EC2_HOST }}$ \
-          frontend-image
+          docker run -d --name frontend-container -p 80:80 frontend-image
           
