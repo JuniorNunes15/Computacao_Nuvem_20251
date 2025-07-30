@@ -32,3 +32,5 @@ EXPOSE 80
 
 # Comando para iniciar o Nginx
 CMD ["nginx", "-g", "daemon off;"]
+docker build -t front-only .
+docker run -d -p 80:80 --name front-only-container front-only

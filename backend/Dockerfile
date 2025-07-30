@@ -2,6 +2,8 @@ FROM python:3.12.3
 
 WORKDIR /app
 
+
+
 # Instalar versão específica do pip e limpar cache
 RUN pip install --no-cache-dir --upgrade pip==25.1.1
 
@@ -13,3 +15,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 CMD ["python", "app.py"]
+
+docker build -t flask-backend .
+docker run -d -p 5000:5000 --name flask-backend-container flask-backend
