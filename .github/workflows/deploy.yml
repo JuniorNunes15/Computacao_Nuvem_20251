@@ -37,7 +37,6 @@ jobs:
           docker run -d \
             --name backend-container \
             -p 5000:5000 \
-            -e DB_HOST=${{ secrets.DB_HOST }} \
             backend-image
 
     # === FRONTEND - EC2_2 ===
@@ -58,7 +57,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd ~/frontend
-          echo "REACT_APP_API_URL=http://${{ secrets.EC2_1_HOST }}:5000" > .env
+          echo "REACT_APP_API_URL=http://${{ secrets.EC2_HOST }}:5000" > .env
           docker rm -f frontend-container || true
           docker rmi frontend-image || true
           docker build -t frontend-image .
