@@ -40,7 +40,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd ~/backend
+          cd ~/backend/backend
           docker rmi backend-image || true
           docker build -t backend-image .
 
@@ -71,6 +71,6 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd ~/frontend
+          cd ~/frontend/frontend
           docker rmi frontend-image || true
           docker build -t frontend-image .
