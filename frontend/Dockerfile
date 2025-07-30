@@ -24,8 +24,6 @@ RUN rm -rf /etc/nginx/conf.d/default.conf
 # Copiar arquivos de build
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Copiar configuração customizada do Nginx
-COPY nginx.conf /etc/nginx/conf.d
 
 # Expor a porta 80
 EXPOSE 80
