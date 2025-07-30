@@ -16,5 +16,3 @@ EXPOSE 5000
 
 CMD ["python", "app.py"]
 
-docker build -t flask-backend .
-docker run -d -p 5000:5000 --name flask-backend-container flask-backend
