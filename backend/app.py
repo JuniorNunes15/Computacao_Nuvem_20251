@@ -1,4 +1,5 @@
 # app.py
+import os
 from flask import Flask, request, jsonify
 from models import Contato, db
 from flask_cors import CORS
@@ -6,8 +7,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+db_host = os.getenv("DB_HOST", "localhost")
 # Configuração do banco de dados (ex: RDS MySQL)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://MYSQL_USER:admin123@localhost/contatos_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:admin123@{db_host}/contatos_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializa o banco de dados
