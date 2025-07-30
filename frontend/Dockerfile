@@ -4,6 +4,7 @@ FROM node:18 AS builder
 # Diretório de trabalho
 WORKDIR /app
 
+COPY package*.json ./
 
 # 2. Limpar cache e instalar dependências
 RUN npm cache clean --force && npm install
