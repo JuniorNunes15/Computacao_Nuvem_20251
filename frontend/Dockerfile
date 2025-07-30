@@ -1,22 +1,16 @@
-# Substitua o Dockerfile atual por este:
-FROM node:18
+# Etapa 1: Build da aplicação React
+FROM node:18 as builder
 
-# Diretório de trabalho
-WORKDIR /app
 
-# 1. Copiar apenas arquivos de dependência
-COPY package*.json ./
-
-# 2. Limpar cache e instalar dependências
-RUN npm cache clean --force && npm install
-
-# 3. Copiar o restante do código
-COPY . .
-
-# 4. Build da aplicação (se necessário)
+RUN npm install
 RUN npm run build
 
-# Expor a porta
+# Etapa 2: Servir os arquivos com Nginx
+FROM nginx:alpine
+
+# Copia o build do React para o diretório padrão do Nginx
+COPY --from=builder /app/build /usr/share/nginx/html
+
 EXPOSE 80
 
-CMD ["npm", "run", "start"]
+CMD ["nginx", "-g", "daemon off;"]
