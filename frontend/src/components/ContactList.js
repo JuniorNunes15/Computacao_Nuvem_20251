@@ -12,7 +12,7 @@ const ContactList = () => {
 
   const fetchContacts = async () => {
     try {
-      const response = await axios.get('http://ec2-54-209-75-88.compute-1.amazonaws.com/contatos');
+      const response = await axios.get('http://localhost:5000/contatos');
       setContacts(response.data);
     } catch (error) {
       console.error('Erro ao carregar contatos:', error);
@@ -21,7 +21,7 @@ const ContactList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://ec2-54-209-75-88.compute-1.amazonaws.com/contatos/${id}`);
+      await axios.delete(`http://localhost:5000/contatos/${id}`);
       setContacts(contacts.filter(contact => contact.id !== id));
     } catch (error) {
       console.error('Erro ao excluir contato:', error);
