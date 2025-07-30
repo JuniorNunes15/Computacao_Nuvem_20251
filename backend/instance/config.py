@@ -1,8 +1,7 @@
-import os
+# instance/config.py
 
-db_user = os.getenv("MYSQL_USER", "admin")
-db_password = os.getenv("MYSQL_PASSWORD", "admin123")
-db_host = os.getenv("MYSQL_HOST", "localhost")
-db_name = os.getenv("MYSQL_DB", "contatos_db")
+# Configurações do banco de dados (ex: Amazon RDS)
+DATABASE_URI = 'mysql://admin:admin123@localhost/contatos_db'
 
-
+# Configurações de ambiente
+DEBUG = False  # Em produção, desative o modo debug

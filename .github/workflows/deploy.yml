@@ -30,5 +30,6 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd ~/app
+          docker system prune -a --volumes -f
           docker-compose down || true
           docker-compose up --build -d
