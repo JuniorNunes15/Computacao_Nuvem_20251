@@ -1,108 +1,54 @@
-name: Deploy to Single EC2
+- name: Build e executar containers
+  uses: appleboy/ssh-action@v1.0.3
+  with:
+    host: ${{ secrets.EC2_HOST }}
+    username: ${{ secrets.EC2_USER }}
+    key: ${{ secrets.EC2_SSH_KEY }}
+    script: |
+      cd ~/app
+      
+      # ===== BACKEND =====
+      echo "Processando backend..."
+      cd backend
+      
+      docker stop backend-container || true
+      docker rm backend-container || true
+      docker rmi backend-image || true
+      
+      # Build com tratamento de erro
+      if docker build -t backend-image . ; then
+        docker run -d \
+          --name backend-container \
+          --restart unless-stopped \
+          -p 5000:5000 \
+          -v $PWD/data:/app/data \
+          backend-image
+      else
+        echo "❌ Falha no build do backend"
+        exit 1
+      fi
 
-on:
-  push:
-    branches:
-      - main
+      # ===== FRONTEND =====
+      echo "Processando frontend..."
+      cd ../frontend
+      
+      docker stop frontend-container || true
+      docker rm frontend-container || true
+      docker rmi frontend-image || true
+      
+      # Build com tratamento de erro
+      if docker build -t frontend-image . ; then
+        docker run -d \
+          --name frontend-container \
+          --restart unless-stopped \
+          -p 3000:80 \
+          -e API_BASE_URL=http://localhost:5000 \
+          frontend-image
+      else
+        echo "❌ Falha no build do frontend"
+        echo "Logs de build:"
+        docker build -t frontend-image . 2>&1 | tee build.log
+        exit 1
+      fi
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        # Resolve problemas de permissão do .git
-        persist-credentials: false
-        fetch-depth: 0
-
-    # Criar arquivo tar sem problemas de permissão
-    - name: Create deployment tarball
-      run: |
-        # Criar tar com permissões adequadas
-        tar --exclude='.git' -czf app.tar.gz .
-        ls -lh app.tar.gz
-
-    # Copiar o tarball para a EC2
-    - name: Copiar tarball para EC2
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        source: "app.tar.gz"
-        target: "/home/${{ secrets.EC2_USER }}/"
-
-    # Extrair e executar na instância EC2
-    - name: Extrair e executar containers
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          # Criar diretório de trabalho
-          WORKDIR="/home/${{ secrets.EC2_USER }}/app"
-          mkdir -p $WORKDIR
-          cd $WORKDIR
-          
-          # Mover e extrair tarball
-          mv ~/app.tar.gz .
-          tar -xzf app.tar.gz
-          chmod -R 755 .  # Corrigir permissões
-          ls -la
-          
-          # ===== BACKEND =====
-          echo "Processando backend..."
-          cd backend
-          
-          docker stop backend-container || true
-          docker rm backend-container || true
-          docker rmi backend-image || true
-          
-          # Build com tratamento de erro
-          if docker build -t backend-image . ; then
-            docker run -d \
-              --name backend-container \
-              --restart unless-stopped \
-              -p 5000:5000 \
-              -v $PWD/data:/app/data \
-              backend-image
-          else
-            echo "❌ Falha no build do backend"
-            exit 1
-          fi
-
-          # ===== FRONTEND =====
-          echo "Processando frontend..."
-          cd ../frontend
-          
-          docker stop frontend-container || true
-          docker rm frontend-container || true
-          docker rmi frontend-image || true
-          
-          # Build com tratamento de erro
-          if docker build -t frontend-image . ; then
-            docker run -d \
-              --name frontend-container \
-              --restart unless-stopped \
-              -p 3000:80 \
-              -e API_BASE_URL=http://localhost:5000 \
-              frontend-image
-          else
-            echo "❌ Falha no build do frontend"
-            echo "Logs de build:"
-            docker build -t frontend-image . 2>&1 | tee build.log
-            echo "----------------------------------------"
-            echo "Conteúdo do diretório:"
-            ls -la
-            echo "----------------------------------------"
-            echo "Conteúdo do Dockerfile:"
-            cat Dockerfile
-            exit 1
-          fi
-
-          # Mostrar containers em execução
-          echo "Containers ativos:"
-          docker ps
+      docker ps

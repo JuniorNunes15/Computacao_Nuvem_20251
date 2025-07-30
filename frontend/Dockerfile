@@ -1,16 +1,35 @@
-# Etapa 1: Build da aplicação React
-FROM node:18 as builder
+# Fase de build - Node.js
+FROM node:18 AS builder
 
+# Diretório de trabalho
+WORKDIR /app
 
-RUN npm install
+# 1. Copiar apenas arquivos de dependência
+COPY package*.json ./
+
+# 2. Limpar cache e instalar dependências
+RUN npm cache clean --force && npm install
+
+# 3. Copiar o restante do código
+COPY . .
+
+# 4. Build da aplicação
 RUN npm run build
 
-# Etapa 2: Servir os arquivos com Nginx
-FROM nginx:alpine
+# Fase de execução - Nginx
+FROM nginx:stable-alpine
 
-# Copia o build do React para o diretório padrão do Nginx
+# Remover configuração padrão do Nginx
+RUN rm -rf /etc/nginx/conf.d/default.conf
+
+# Copiar arquivos de build
 COPY --from=builder /app/build /usr/share/nginx/html
 
+# Copiar configuração customizada do Nginx
+COPY nginx.conf /etc/nginx/conf.d
+
+# Expor a porta 80
 EXPOSE 80
 
+# Comando para iniciar o Nginx
 CMD ["nginx", "-g", "daemon off;"]
