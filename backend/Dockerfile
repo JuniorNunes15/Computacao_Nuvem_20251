@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Instalar dependências
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt --break-system
 
 # Expõe a porta padrão do Flask
 EXPOSE 5000
